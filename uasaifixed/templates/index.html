@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complex Food Akinator - Sistem Rekomendasi Menu</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="akinator-logo">🧞‍♂️</div>
+            <h1>Complex Food Akinator</h1>
+            <p class="subtitle">Sistem rekomendasi menu tanpa pertanyaan kesegaran!</p>
+        </header>
+
+        <main>
+            <!-- Welcome Screen -->
+            <div id="welcome-screen" class="screen">
+                <div class="welcome-content">
+                    <div class="hero-section">
+                        <h2>Selamat Datang di Complex Food Akinator!</h2>
+                        <p class="hero-description">Saya akan mengajukan pertanyaan sederhana tentang bahan yang ada di dapur Anda untuk memberikan rekomendasi menu terbaik.</p>
+                    </div>
+                    
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">🔍</div>
+                            <h4>Pertanyaan Kompleks & Bercabang</h4>
+                            <p>Sistem pertanyaan yang detail dengan sub-kategori untuk hasil yang lebih akurat</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📋</div>
+                            <h4>15+ Kategori Bahan Detail</h4>
+                            <p>Telur, daging, ikan, sayuran, bumbu dengan sub-kategori jumlah dan jenis</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🍽️</div>
+                            <h4>60+ Menu Database</h4>
+                            <p>Database menu yang sangat lengkap dengan variasi berdasarkan jumlah bahan</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">⚡</div>
+                            <h4>Minimal 10 Rekomendasi</h4>
+                            <p>Dijamin mendapat minimal 10 menu dengan tingkat kecocokan yang akurat</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box">
+                        <div class="info-icon">💡</div>
+                        <div class="info-content">
+                            <h4>Tips Penggunaan</h4>
+                            <p>Sistem akan menanyakan detail tentang jenis dan jumlah bahan yang Anda miliki. Maksimal 40 pertanyaan dengan target minimal 10 bahan untuk hasil optimal. Pertanyaan akan bercabang berdasarkan jawaban Anda untuk akurasi maksimal.</p>
+                        </div>
+                    </div>
+                    
+                    <button id="start-btn" class="btn-primary">
+                        <span class="btn-icon">🚀</span>
+                        Mulai Analisis Bahan
+                    </button>
+                </div>
+            </div>
+
+            <!-- Question Screen -->
+            <div id="question-screen" class="screen hidden">
+                <div class="question-content">
+                    <div class="progress-section">
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill"></div>
+                            </div>
+                            <div class="progress-info">
+                                <span class="progress-text" id="progress-text">Pertanyaan 1 dari 30</span>
+                                <span class="ingredients-count" id="ingredients-count">Bahan: 0/10</span>
+                            </div>
+                        </div>
+                        
+                        <div class="question-category" id="question-category">
+                            <span class="category-badge">Kategori: Telur</span>
+                        </div>
+                    </div>
+                    
+                    <div class="question-section">
+                        <div class="akinator-face">🤔</div>
+                        <div class="question-bubble">
+                            <h2 id="question-text">Loading...</h2>
+                        </div>
+                    </div>
+                    
+                    <div class="answer-section">
+                        <button id="yes-btn" class="btn-answer btn-yes">
+                            <span class="btn-icon">✅</span>
+                            YA
+                        </button>
+                        <button id="no-btn" class="btn-answer btn-no">
+                            <span class="btn-icon">❌</span>
+                            TIDAK
+                        </button>
+                    </div>
+
+                    <div class="ingredients-preview" id="ingredients-preview">
+                        <h4>🥘 Bahan yang sudah dikonfirmasi:</h4>
+                        <div id="current-ingredients" class="ingredient-chips"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Screen -->
+            <div id="loading-screen" class="screen hidden">
+                <div class="loading-content">
+                    <div class="loading-animation">
+                        <div class="akinator-face thinking">🧞‍♂️</div>
+                        <div class="loading-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                    <h2>Sedang menganalisis dapur Anda...</h2>
+                    <p class="loading-description">Memproses informasi detail bahan dan mencari resep terbaik berdasarkan jumlah dan jenis...</p>
+                    
+                    <div class="loading-stats">
+                        <div class="stat-card">
+                            <span class="stat-number" id="loading-questions">0</span>
+                            <span class="stat-label">Pertanyaan</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number" id="loading-ingredients">0</span>
+                            <span class="stat-label">Bahan</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Screen -->
+            <div id="results-screen" class="screen hidden">
+                <div class="results-content">
+                    <div class="results-header">
+                        <div class="akinator-face happy">😊</div>
+                        <h2>Analisis Dapur Selesai!</h2>
+                        <p>Berikut adalah menu-menu yang bisa Anda buat:</p>
+                    </div>
+                    
+                    <div class="results-summary">
+                        <div class="summary-card">
+                            <span class="summary-number" id="total-questions">0</span>
+                            <span class="summary-label">Pertanyaan</span>
+                        </div>
+                        <div class="summary-card">
+                            <span class="summary-number" id="total-ingredients">0</span>
+                            <span class="summary-label">Bahan</span>
+                        </div>
+                        <div class="summary-card">
+                            <span class="summary-number" id="total-recipes">0</span>
+                            <span class="summary-label">Resep</span>
+                        </div>
+                    </div>
+                    
+                    <div class="ingredients-summary">
+                        <h3>🥘 Inventaris Dapur Anda:</h3>
+                        <div id="available-ingredients" class="ingredient-chips"></div>
+                    </div>
+                    
+                    <div class="recommendations-section">
+                        <h3>📋 Rekomendasi Menu Makanan</h3>
+                        <p class="recommendations-subtitle">Diurutkan berdasarkan tingkat kecocokan dengan bahan yang Anda miliki</p>
+                        <div id="recommendations-list" class="recommendations-list">
+                            <!-- Hasil rekomendasi akan ditampilkan di sini -->
+                        </div>
+                    </div>
+                    
+                    <button id="play-again-btn" class="btn-primary">
+                        <span class="btn-icon">🔄</span>
+                        Analisis Ulang
+                    </button>
+                </div>
+            </div>
+
+            <!-- No Results Screen -->
+            <div id="no-results-screen" class="screen hidden">
+                <div class="no-results-content">
+                    <div class="akinator-face sad">😔</div>
+                    <h2>Maaf, analisis belum optimal</h2>
+                    <p>Sepertinya bahan-bahan yang Anda miliki belum cukup untuk membuat menu yang ada di database saya.</p>
+                    
+                    <div class="suggestions-box">
+                        <h4>💡 Saran:</h4>
+                        <ul>
+                            <li>Periksa kembali bahan-bahan di dapur Anda</li>
+                            <li>Coba jawab "YA" untuk lebih banyak bahan yang tersedia</li>
+                            <li>Pastikan Anda memiliki bumbu dasar seperti garam dan minyak</li>
+                        </ul>
+                    </div>
+                    
+                    <button id="try-again-btn" class="btn-primary">
+                        <span class="btn-icon">🔄</span>
+                        Coba Lagi
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Complex Food Akinator - Sistem Rekomendasi Menu Cerdas</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
